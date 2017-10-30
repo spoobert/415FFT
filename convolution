@@ -23,28 +23,22 @@ def FFTlocal( A , w ):
     Ao = FFTlocal( A[1::2] , w**2 )
     r = [np.complex(0,0)] * len(A)
     for j in range( int((n/2)) ):
-        print(Ae[j], Ao[j])
         r[j] = ((Ae[j] + (w**j)*Ao[j]))
         r[j + int(n/2)] = ((Ae[j] - (w**j)*Ao[j]))
-    return r
+    return [round(this,5) for this in r]
 
 def invFFT( x ):
-    # reals = [np.real(a)*(1/4) for a in x]
-    # imags = [np.imag(a)*(1/4) for a in x]
-    # reals1 = [reals[0]] + reals[-1:1:-1]
-    # imags1 = [imags[0]] + imags[-1:1:-1]
-    # return [np.complex(r,i) for (r,i) in zip(reals1, imags1)]
-    mapReal = map( lambda x: np.real(x)*(1/4) , x )
-    mapImag = map( lambda x: np.imag(x)*(1/4) , x )
-    firstReal = islice( mapReal, 1 )
-    firstImag = islice( mapImag, 1 )
-    revReal = reversed( list(islice( mapReal , 1 , None )) )
-    revImag = reversed( list(islice( mapImag , 1 , None )) )
-    compReal = chain( firstReal , revReal )
-    compImag = chain( firstImag , revImag )
-    complxList = map( np.complex , compReal , compImag )
-    return FFT(list(complxList))
-
+    reals = [np.real(a)*(1/4) for a in x]
+    reals1 = reals[::-1]
+    realcar = reals1.pop()
+    reals1.insert(0,realcar)
+    print(reals1)
+    imags = [np.imag(a)*(1/4) for a in x]
+    imags1 = imags[::-1]
+    imagscar = imags.pop()
+    imags1.insert(0,imagscar)
+    return FFT([np.complex(r,i) for (r,i) in zip(reals1, imags1)])
+    
 def SFT( A ):
     n = len(A)
     w = getOmega( n )
@@ -59,7 +53,7 @@ def SFT( A ):
 
 def main():
     res = FFT([2,4,5,6])
-    print(res)
+    print(res , 'res in main')
     print( invFFT(res) )
 
 if __name__ == "__main__":
